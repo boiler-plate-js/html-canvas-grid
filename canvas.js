@@ -1,3 +1,35 @@
+/**
+ * MIT Licensed, (c) B.Ricks, PhD. See https://opensource.org/licenses/MIT.
+ * 
+ * This project is designed to simplify the creation of quick html page, specifically demos.
+ * 
+ * Steps this library does for you:
+ * Set the favicon to a emoji.
+ * Set the body to fill the html page
+ * Set the webpage title
+ * Add a canvas to the DOM
+ * Set the canvas to fill the webpage
+ * Listen to mouse events
+ * Initialize a render loop running a 30fps
+ * On every update step, it adjusts the canvas to fit in the window
+ * On every draw step, it draws a grid within in the window.
+ * 
+ * With all this, it checks for certain functions in your code. 
+ * If these exist, then they are called at the appropriate time.
+ * The functions are:
+ * 
+ * customUpdate() - Called once every game look
+ * customDraw(ctx) - Lets you draw to world space
+ * customUI(ctx) - Lets you draw to screen space
+ * customBoot() - merges the object returned by this function with the options object
+ *  - For example, if customBoot exists and return the object {showGrid:false},
+ *  then the options object will have key showGrid with a value of false.
+ *  As a result, the grid will be drawn.
+ *  - In order for customBoot to be called in your code, you need to call this script 
+ *  after you initialize your script.
+ * 
+ */
+
 let options = {
   cameraZoomMin: 100,
   cameraZoomMax: .01,
@@ -13,13 +45,15 @@ let options = {
 }
 
 //From https://medium.com/spemer/set-favicons-with-javascript-9b88bdaa43dc
-function setFavicons(favImg){
+function setFavicons(favImg) {
   let headTitle = document.querySelector('head');
   let setFavicon = document.createElement('link');
-  setFavicon.setAttribute('rel','shortcut icon');
-  setFavicon.setAttribute('href',favImg);
+  setFavicon.setAttribute('rel', 'shortcut icon');
+  setFavicon.setAttribute('href', favImg);
   headTitle.appendChild(setFavicon);
 }
+
+
 setFavicons("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>");
 
 document.body.style.height = "100%"
@@ -52,10 +86,13 @@ var lastMouseY = 0;
 
 var cameraZoom = 1;
 
+
 ///This gets called once when the page is completetly loaded.
 ///Think main()
 function initialBoot() {
   console.log(window.innerHeight)
+  if(typeof customBoot === "function")
+    options = Object.assign({}, options, customBoot());
 
   ///Update the model
   update();
@@ -114,7 +151,7 @@ function drawCanvas() {
   ctx.save();
 
   ctx.translate(width / 2 - cameraCenterX, height / 2 - cameraCenterY);
-  if(ctx.getTransform().e != (width/2 - cameraCenterX))
+  if (ctx.getTransform().e != (width / 2 - cameraCenterX))
     console.log("Bad")
   ctx.scale(cameraZoom, cameraZoom);
 
@@ -155,13 +192,8 @@ function drawCanvas() {
       toPush.opacity = options.gridOpacity * (downOne / maxSpan);
       toPush.opacity **= 2;
     }
-
     gridSteps.push(toPush);
-
-
   }
-
-
 
   let multiple = options.major ** (maxSpanLog);
   if (options.showGrid) {
@@ -255,6 +287,7 @@ function drawCanvas() {
   }
 
   if (typeof customUI === "function") {
+    ctx.fillStyle = "black"
     customUI(ctx);
   }
 
