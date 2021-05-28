@@ -12,7 +12,19 @@ let options = {
   scaleFactor: 1.1,
 }
 
+//From https://medium.com/spemer/set-favicons-with-javascript-9b88bdaa43dc
+function setFavicons(favImg){
+  let headTitle = document.querySelector('head');
+  let setFavicon = document.createElement('link');
+  setFavicon.setAttribute('rel','shortcut icon');
+  setFavicon.setAttribute('href',favImg);
+  headTitle.appendChild(setFavicon);
+}
+setFavicons("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>");
+
 document.body.style.height = "100%"
+
+document.title = "Boilerplate"
 
 //Tab index trick to make canvas focusable: https://stackoverflow.com/a/12887221/10047920
 document.body.innerHTML += "<canvas id='canv' tabindex=1></canvas>";
