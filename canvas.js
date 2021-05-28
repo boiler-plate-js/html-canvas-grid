@@ -122,7 +122,7 @@ function tick() {
 }
 
 ///This gets called whenever the window size changes and the
-///canvas neends to adjust.
+///canvas needs to adjust.
 ///This also adjusts the content pane
 function update() {
 
