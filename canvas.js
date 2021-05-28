@@ -42,6 +42,7 @@ let options = {
   grayScale: 150,
   clamp: 1000000000,
   scaleFactor: 1.1,
+  initialCameraZoom:1
 }
 
 //From https://medium.com/spemer/set-favicons-with-javascript-9b88bdaa43dc
@@ -84,15 +85,18 @@ var isMouseDown = false; //True if the mouse is down
 var lastMouseX = 0;
 var lastMouseY = 0;
 
-var cameraZoom = 1;
+var cameraZoom;
 
 
 ///This gets called once when the page is completetly loaded.
 ///Think main()
-function initialBoot() {
-  console.log(window.innerHeight)
+async function initialBoot() {
   if(typeof customBoot === "function")
-    options = Object.assign({}, options, customBoot());
+  {
+    let response = await customBoot();
+    options = Object.assign({}, options, response);
+  }
+  cameraZoom = options.initialCameraZoom;
 
   ///Update the model
   update();
@@ -151,8 +155,8 @@ function drawCanvas() {
   ctx.save();
 
   ctx.translate(width / 2 - cameraCenterX, height / 2 - cameraCenterY);
-  if (ctx.getTransform().e != (width / 2 - cameraCenterX))
-    console.log("Bad")
+  //if (ctx.getTransform().e != (width / 2 - cameraCenterX))
+  //  console.log("Bad")
   ctx.scale(cameraZoom, cameraZoom);
 
   //console.log(cameraZoom)
